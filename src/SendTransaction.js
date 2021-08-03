@@ -1,19 +1,19 @@
-import React, {useState} from "react"
-import * as fcl from "@onflow/fcl"
-import styled from 'styled-components'
+import React, {useState} from "react";
+import * as fcl from "@onflow/fcl";
+import styled from 'styled-components';
 
 const Card = styled.div`
   margin: 10px 5px;
   padding: 10px;
   border: 1px solid #c0c0c0;
   border-radius: 5px;
-`
+`;
 
 const Header = styled.div`
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 5px;
-`
+`;
 
 const Code = styled.pre`
   background: #f0f0f0;
@@ -21,7 +21,7 @@ const Code = styled.pre`
   max-height: 300px;
   overflow-y: auto;
   padding: 5px;
-`
+`;
 
 const simpleTransaction = `\
 transaction {
@@ -29,22 +29,22 @@ transaction {
     log("Hello World!!")
   }
 }
-`
+`;
 
 const SendTransaction = () => {
-  const [status, setStatus] = useState("Not started")
-  const [transaction, setTransaction] = useState(null)
+  const [status, setStatus] = useState("Not started");
+  const [transaction, setTransaction] = useState(null);
 
   const sendTransaction = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     
-    setStatus("Resolving...")
+    setStatus("Resolving...");
 
     const blockResponse = await fcl.send([
       fcl.getLatestBlock(),
-    ])
+    ]);
 
-    const block = await fcl.decode(blockResponse)
+    const block = await fcl.decode(blockResponse);
     
     try {
       const tx = await fcl.send([
@@ -52,11 +52,11 @@ const SendTransaction = () => {
         fcl.proposer(fcl.currentUser().authorization),
         fcl.payer(fcl.currentUser().authorization),
         fcl.ref(block.id),
-      ])
+      ]);
 
-      const { transactionId } = tx
+      const { transactionId } = tx;
 
-      setStatus("Transaction sent, waiting for confirmation")
+      setStatus("Transaction sent, waiting for confirmation");
 
       const unsub = fcl
         .tx({ transactionId })
@@ -67,10 +67,10 @@ const SendTransaction = () => {
             setStatus("Transaction is Sealed")
             unsub()
           }
-        })
+        });
     } catch (error) {
-      console.error(error)
-      setStatus("Transaction failed")
+      console.error(error);
+      setStatus("Transaction failed");
     }
   }
 
@@ -88,7 +88,7 @@ const SendTransaction = () => {
 
       {transaction && <Code>{JSON.stringify(transaction, null, 2)}</Code>}
     </Card>
-  )
+  );
 }
 
-export default SendTransaction
+export default SendTransaction;
